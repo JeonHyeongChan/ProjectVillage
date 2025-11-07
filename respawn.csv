@@ -1,0 +1,5 @@
+﻿id,time,name,modelid,x,y,pattern
+1,2,오,model://maplestorymonster$0108737afb9548309c03795430b20c05,2,2,1
+2,5,어,model://maplestorymonster$0108737afb9548309c03795430b20c05,-1,-3,2
+3,10,아,model://maplestorymonster$0108737afb9548309c03795430b20c05,0,2,3
+4,15,요,model://maplestorymonster$0108737afb9548309c03795430b20c05,3,0,4
