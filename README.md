@@ -21,10 +21,10 @@ ex)
 - skilltable, a:4 오기입 수정
 
 커밋 메시지
-new : 새로운 파일 추가
-feat : 새로운 기능 추가
-fix : 버그 수정
-docs : 문서 변경
-style : 코드 포맷팅 (세미콜론 누락 등)
-refactor : 코드 리팩토링(기능 변경 없는 수정)
-test : 테스트 추가 또는 수정
+\nnew : 새로운 파일 추가
+\nfeat : 새로운 기능 추가
+\nfix : 버그 수정
+\ndocs : 문서 변경
+\nstyle : 코드 포맷팅 (세미콜론 누락 등)
+\nrefactor : 코드 리팩토링(기능 변경 없는 수정)
+\ntest : 테스트 추가 또는 수정
