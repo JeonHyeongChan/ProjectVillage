@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="PlayerHit" Language="Lua" Name="PlayerHit" Type="Extend" Source="Template" Target="MOD.Core.HitComponent" ModifyTime="2023-10-07T05:39:24.1104376+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="2" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="ImmuneCooldown" Type="number" DefaultValue="1" SyncDirection="None" />
+    <CodeBlockProperty Name="LastHitTime" Type="number" DefaultValue="0" SyncDirection="None" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="IsHitTarget" ExecSpace="All">
+      <Return Type="boolean" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="attackInfo" Type="string" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+-- 1챕터 피격 시스템
+local currentTime = _UtilLogic.ElapsedSeconds
+
+if self.LastHitTime + self.ImmuneCooldown < currentTime then
+	self.LastHitTime = _UtilLogic.ElapsedSeconds
+	
+	-- Miss 로직
+	 local rand = _UtilLogic:RandomIntegerRange(0, 100)
+     if rand < 10 then
+        _DamageSkinService:PlayTextDamage(self.Entity, "6ba67548f43f48f29eb23dafd0766383", DamageSkinTextType.Miss, DamageSkinTweenType.Default, Vector2.zero, Vector2.one, 1)
+        return false
+     end	
+	
+    return true
+end
+
+return false
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="OnHit" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="attacker" Type="Entity" SyncDirection="None" />
+        <CodeBlockProperty Name="damage" Type="integer" SyncDirection="None" />
+        <CodeBlockProperty Name="isCritical" Type="boolean" SyncDirection="None" />
+        <CodeBlockProperty Name="attackInfo" Type="string" SyncDirection="None" />
+        <CodeBlockProperty Name="hitCount" Type="int32" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+__base:OnHit(attacker,damage,isCritical,attackInfo,hitCount)
+
+-- 1. 중력 가속도
+local attackerX = attacker.TransformComponent.Position.x
+local myX = self.Entity.TransformComponent.Position.x
+
+local randX = _UtilLogic:RandomIntegerRange(170, 220) * 0.01
+local randY = _UtilLogic:RandomIntegerRange(150, 170) * 0.01
+
+if myX < attackerX then  -- 내가 왼쪽에 있다.
+	self.Entity.RigidbodyComponent:SetForce(Vector2(-randX, randY))
+else -- 내가 오른쪽에 있다.
+	self.Entity.RigidbodyComponent:SetForce(Vector2(randX, randY))
+end
+
+-- 2. 깜빡이는 효과 (글리치 효과)
+self:PlayerEntityGlitch()
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="PlayerEntityGlitch" ExecSpace="Client">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+local glitch = function()
+	self.Entity.AvatarRendererComponent:ChangeMaterial("material://fd0dee7d-19ca-46a7-a368-f9a690d4fe81")  -- 글리치 효과
+end
+
+local normal = function()
+	self.Entity.AvatarRendererComponent:ChangeMaterial("")
+end
+
+_TimerService:SetTimerOnce(glitch, 0)
+_TimerService:SetTimerOnce(normal, 0.7)
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers />
+</CodeBlockFile>

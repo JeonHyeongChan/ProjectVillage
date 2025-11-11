@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="29a2ddb9-5c25-4dc6-a884-a3641f443ec5" Language="Lua" Name="skill_type" Type="Component" Source="None" ModifyTime="2025-11-07T10:44:33.3136146+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="1" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="speed" Type="number" DefaultValue="0" SyncDirection="None" />
+    <CodeBlockProperty Name="damage" Type="number" DefaultValue="0" SyncDirection="None" />
+    <CodeBlockProperty Name="direction" Type="number" DefaultValue="0" SyncDirection="None" />
+    <CodeBlockProperty Name="lifeTime" Type="number" DefaultValue="5" SyncDirection="None" />
+    <CodeBlockProperty Name="time" Type="number" DefaultValue="0" SyncDirection="None" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="OnUpdate" ExecSpace="ClientOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="delta" Type="number" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+self.Entity.TransformComponent.Position = self.Entity.TransformComponent.Position + Vector3(self.direction, 0, 0) * self.speed
+
+self.time = self.time + delta
+if self.time >= self.lifeTime then
+	self.Entity:Destroy()
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="OnBeginPlay" ExecSpace="ClientOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+if self.direction < 0 then
+	self.direction = -1
+else
+	self.direction = 1
+end
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers>
+    <CodeBlockEntityEventHandler Name="HandleTriggerEnterEvent" EventName="TriggerEnterEvent" ParameterName="event" Target="self" Scope="All">
+      <Code><![CDATA[
+
+-- Parameters
+ local TriggerBodyEntity = event.TriggerBodyEntity
+---------------------------------------------------------
+TriggerBodyEntity.HitComponent:OnHit(self.Entity, self.damage, false, "", 1)
+]]></Code>
+    </CodeBlockEntityEventHandler>
+  </EntityEventHandlers>
+</CodeBlockFile>

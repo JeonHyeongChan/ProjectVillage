@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="1cf3ba96-358f-46f2-9a06-00fa1246d6b3" Language="Lua" Name="skill_normal" Type="Component" Source="None" ModifyTime="2025-11-06T17:59:17.5680765+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="1" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="player" Type="Entity" DefaultValue="nil" SyncDirection="None" />
+    <CodeBlockProperty Name="spawnTime" Type="number" DefaultValue="2" SyncDirection="None" />
+    <CodeBlockProperty Name="time" Type="number" DefaultValue="0" SyncDirection="None" />
+    <CodeBlockProperty Name="parent" Type="Entity" DefaultValue="827bda7a-38f3-466f-a197-f90093b8de0b" SyncDirection="None" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="OnBeginPlay" ExecSpace="ClientOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+self.player = _UserService.LocalPlayer
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="OnUpdate" ExecSpace="ClientOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="delta" Type="number" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+self.time = self.time + delta
+
+if self.time >= self.spawnTime then
+	self:spawn()
+	self.time = 0
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="spawn" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+if self.parent == nil then
+	self.parent = _EntityService:GetEntityByPath("/maps/Battleground/skills")
+end
+
+--스킬 모델--
+
+local skill1  = _SpawnService:SpawnByModelId("model://maplestoryitem$c5c11a6d94054c3aab31743c7e838565", "기본", self.player.TransformComponent.Position, self.parent)
+skill1.skill_type.direction = self.player.PlayerControllerComponent.LookDirectionX
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers />
+</CodeBlockFile>

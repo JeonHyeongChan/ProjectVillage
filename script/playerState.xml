@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="6b10f0d0-ad3a-4858-b513-20d5e9bc6ce7" Language="Lua" Name="PlayerState" Type="Component" Source="None" ModifyTime="2025-11-05T16:58:34.1998904+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="1" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="nowHp" Type="number" DefaultValue="1000" SyncDirection="None" />
+  </Properties>
+  <Methods />
+  <EntityEventHandlers>
+    <CodeBlockEntityEventHandler Name="HandleHitEvent" EventName="HitEvent" ParameterName="event" Target="self" Scope="All">
+      <Code><![CDATA[
+-- Parameters
+local AttackCenter = event.AttackCenter
+local AttackerEntity = event.AttackerEntity
+local Damages = event.Damages
+local Extra = event.Extra
+local IsCritical = event.IsCritical
+local TotalDamage = event.TotalDamage
+---------------------------------------------------------
+print("플레이어가 공격 당했다")
+
+for i = 1, Damages.Count do
+	self.nowHp = self.nowHp - Damages[i]
+end
+
+print("남은 체력 :"..self.nowHP)
+]]></Code>
+    </CodeBlockEntityEventHandler>
+  </EntityEventHandlers>
+</CodeBlockFile>

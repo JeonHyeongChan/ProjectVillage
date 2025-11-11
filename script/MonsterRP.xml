@@ -1,0 +1,139 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="5616a4cb-b6ea-4e9c-ab71-43d4166fe898" Language="Lua" Name="MonsterRP" Type="Component" Source="None" ModifyTime="2025-11-06T15:54:27.4467285+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="1" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="date" Type="table" DefaultValue="{}" SyncDirection="None" />
+    <CodeBlockProperty Name="spawnPosition" Type="Entity" DefaultValue="779dd089-dab5-4194-82d4-ed6b294326d8" SyncDirection="None" />
+    <CodeBlockProperty Name="timer" Type="Component" DefaultValue="f5889247-bce7-4047-b910-726633ad4c7c:TImer" SyncDirection="None" />
+    <CodeBlockProperty Name="spawnTime" Type="number" DefaultValue="0" SyncDirection="None" />
+    <CodeBlockProperty Name="nowid" Type="number" DefaultValue="1" SyncDirection="None" />
+    <CodeBlockProperty Name="player" Type="Entity" DefaultValue="nil" SyncDirection="None" />
+    <CodeBlockProperty Name="lastid" Type="number" DefaultValue="0" SyncDirection="None" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="OnMapEnter" ExecSpace="ClientOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="enteredMap" Type="Entity" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+local loadDate = _DataService:GetTable("respawn")
+
+for i = 1, loadDate:GetRowCount() do
+	local temp = {}
+
+	temp["id"] = tonumber(loadDate:GetCell(i, "id"))
+	temp["time"] = tonumber(loadDate:GetCell(i, "time"))
+	temp["name"] = loadDate:GetCell(i, "name")
+	temp["modelid"] = loadDate:GetCell(i, "modelid")
+	temp["x"] = tonumber(loadDate:GetCell(i, "x"))
+	temp["y"] = tonumber(loadDate:GetCell(i, "y"))
+	temp["pattern"] = tonumber(loadDate:GetCell(i, "pattern"))
+	
+	self.date[temp["id"]] = temp
+end
+
+self.lastid = loadDate:GetRowCount()
+self.nowid = 1
+self.spawnTime = self.date[self.nowid]["time"]
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="OnBeginPlay" ExecSpace="ClientOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+self.player = _UserService.LocalPlayer
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="OnUpdate" ExecSpace="ClientOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="delta" Type="number" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+if self.nowid > self.lastid then
+	return
+end
+
+
+if self.timer.playTime >= self.spawnTime then
+	self:Spawn()
+end
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="Spawn" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+local modelId = self.date[self.nowid]["modelid"]
+local name = self.date[self.nowid]["name"]
+local pos = self.player.TransformComponent.Position + Vector3(self.date[self.nowid]["x"], self.date[self.nowid]["y"], 0)
+
+--_SpawnService:SpawnByModelId(modelId, name, pos, self.spawnPosition)
+self:Pattern(modelId, name, pos, self.date[self.nowid]["pattern"])
+
+self.nowid = self.nowid + 1
+
+if self.nowid > self.lastid then
+	return	
+end
+self.spawnTime = self.date[self.nowid]["time"]
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="Pattern" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="modelid" Type="string" DefaultValue="&quot;&quot;" SyncDirection="None" />
+        <CodeBlockProperty Name="name" Type="string" DefaultValue="&quot;&quot;" SyncDirection="None" />
+        <CodeBlockProperty Name="pos" Type="Vector3" DefaultValue="Vector3(0,0,0)" SyncDirection="None" />
+        <CodeBlockProperty Name="pattern" Type="number" DefaultValue="0" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+if pattern == 0 then
+	_SpawnService:SpawnByModelId(modelid, name, pos, self.spawnPosition)
+end
+
+
+if pattern == 1 then
+
+	for i = 1, 5 do
+		local point = pos + Vector3(-2 + i, 10, 0)
+		_SpawnService:SpawnByModelId(modelid, name, point, self.spawnPosition)
+		
+		point = pos + Vector3(-2 + i, -10, 0)
+		_SpawnService:SpawnByModelId(modelid, name, point, self.spawnPosition)
+	end
+	
+elseif pattern == 2 then
+
+	for i = 1, 15 do
+		local point = pos + Vector3(10, -2 + i, 0)
+		_SpawnService:SpawnByModelId(modelid, name, point, self.spawnPosition)
+		
+		point = pos + Vector3(-10, -2 + i, 0)
+		_SpawnService:SpawnByModelId(modelid, name, point, self.spawnPosition)
+	end
+
+elseif pattern == 3 then
+	for i = 1, 30 do
+		local point = pos + Vector3(-2 + i, 10, 0)
+		_SpawnService:SpawnByModelId(modelid, name, point, self.spawnPosition)
+		
+		point = pos + Vector3(-2 + i, -10, 0)
+		_SpawnService:SpawnByModelId(modelid, name, point, self.spawnPosition)
+	end
+
+elseif pattern == 4 then
+	for i = 1, 40 do
+		local point = pos + Vector3(-2 + i, 15, 0)
+		_SpawnService:SpawnByModelId(modelid, name, point, self.spawnPosition)
+		
+		point = pos + Vector3(-2 + i, -15, 0)
+		_SpawnService:SpawnByModelId(modelid, name, point, self.spawnPosition)
+	end
+end
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers />
+</CodeBlockFile>

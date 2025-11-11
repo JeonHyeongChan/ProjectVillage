@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeBlockFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Id="6b19a99f-4f30-41b0-9155-3883feefd5a9" Language="Lua" Name="TImer" Type="Component" Source="None" ModifyTime="2025-11-06T14:45:51.9678209+09:00">
+  <CoreVersion Major="0" Minor="2" />
+  <ScriptVersion Major="1" Minor="1" />
+  <Description />
+  <Properties>
+    <CodeBlockProperty Name="playTime" Type="number" DefaultValue="0" SyncDirection="None" />
+    <CodeBlockProperty Name="timeText" Type="Component" DefaultValue="f5889247-bce7-4047-b910-726633ad4c7c:TextComponent" SyncDirection="None" />
+  </Properties>
+  <Methods>
+    <CodeBlockMethod Name="OnBeginPlay" ExecSpace="ClientOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+self.playTime = 0
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="OnUpdate" ExecSpace="ClientOnly">
+      <Return Type="void" SyncDirection="None" />
+      <Arguments>
+        <CodeBlockProperty Name="delta" Type="number" SyncDirection="None" />
+      </Arguments>
+      <Code><![CDATA[
+self.playTime = self.playTime + delta
+self:CheckTime()
+
+
+]]></Code>
+    </CodeBlockMethod>
+    <CodeBlockMethod Name="CheckTime" ExecSpace="All">
+      <Return Type="void" SyncDirection="None" />
+      <Code><![CDATA[
+local sec = math.floor(self.playTime)
+
+---------------
+
+if sec < 10 then
+	self.timeText.Text = "00:0"..tostring(sec)
+
+elseif sec < 60 then
+	self.timeText.Text = "00:"..tostring(sec)
+	
+elseif sec < 600 then
+	local min = math.floor(sec / 60)
+	local csec = sec % 60
+
+	if csec < 10 then
+	self.timeText.Text = "0"..tostring(min)..":0"..tostring(csec)
+	
+	elseif csec < 60 then
+	self.timeText.Text = "0"..tostring(min)..":"..tostring(csec)
+	end
+	
+else
+	local min = math.floor(sec / 60)
+	local csec = sec % 60
+
+	if csec < 10 then
+	self.timeText.Text = "0"..tostring(min)..":0"..tostring(csec)
+	
+	elseif csec < 60 then
+	self.timeText.Text = "0"..tostring(min)..":"..tostring(csec)
+	end
+end
+]]></Code>
+    </CodeBlockMethod>
+  </Methods>
+  <EntityEventHandlers />
+</CodeBlockFile>
